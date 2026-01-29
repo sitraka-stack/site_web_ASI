@@ -28,7 +28,7 @@ class SaisonAdmin(admin.ModelAdmin):
 
 @admin.register(Joueur)
 class JoueurAdmin(admin.ModelAdmin):
-    list_display = ['prenom', 'nom', 'date_naissance', 'category', 'category_age']
+    list_display = ['prenom', 'nom', 'date_naissance', 'category', 'category_age','email','telephone']
     list_filter = ['category', 'category_age']
     search_fields = ['nom', 'prenom']
     date_hierarchy = 'date_naissance'

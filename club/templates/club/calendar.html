@@ -1,0 +1,214 @@
+{% extends 'club/base.html' %}
+{% load static %}
+
+{% block title %}Calendrier - ASI Volley{% endblock %}
+
+{% block content %}
+
+<!-- En-tête de page -->
+<div class="hero-section">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold mb-3">
+      <i class="bi bi-calendar-event"></i> Calendrier des Matchs
+    </h1>
+    <p class="lead">Retrouvez tous nos matchs passés et à venir</p>
+  </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="container my-5">
+  
+  <!-- Filtres -->
+  <div class="card shadow-sm mb-5">
+    <div class="card-body">
+      <h5 class="card-title mb-4">
+        <i class="bi bi-funnel-fill text-primary me-2"></i>
+        Filtrer les matchs
+      </h5>
+      <form method="GET" class="row g-3">
+        
+        <!-- Filtre Saison -->
+        <div class="col-md-3">
+          <label for="saison" class="form-label fw-bold">Saison</label>
+          <select name="saison" id="saison" class="form-select">
+            <option value="">Toutes les saisons</option>
+            {% for saison in saisons %}
+            <option value="{{ saison.id }}" {% if request.GET.saison == saison.id|stringformat:"s" %}selected{% endif %}>
+              {{ saison.periode }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <!-- Filtre Championnat -->
+        <div class="col-md-3">
+          <label for="championnat" class="form-label fw-bold">Championnat</label>
+          <select name="championnat" id="championnat" class="form-select">
+            <option value="">Tous les championnats</option>
+            {% for champ in championnats %}
+            <option value="{{ champ.id }}" {% if request.GET.championnat == champ.id|stringformat:"s" %}selected{% endif %}>
+              {{ champ.nom }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <!-- Filtre Catégorie Âge -->
+        <div class="col-md-3">
+          <label for="categorie_age" class="form-label fw-bold">Catégorie d'âge</label>
+          <select name="categorie_age" id="categorie_age" class="form-select">
+            <option value="">Toutes</option>
+            {% for cat in categories_age %}
+            <option value="{{ cat.id }}" {% if request.GET.categorie_age == cat.id|stringformat:"s" %}selected{% endif %}>
+              {{ cat.nom }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <!-- Filtre Catégorie Genre -->
+        <div class="col-md-3">
+          <label for="categorie_genre" class="form-label fw-bold">Genre</label>
+          <select name="categorie_genre" id="categorie_genre" class="form-select">
+            <option value="">Tous</option>
+            {% for cat in categories_genre %}
+            <option value="{{ cat.id }}" {% if request.GET.categorie_genre == cat.id|stringformat:"s" %}selected{% endif %}>
+              {{ cat.get_genre_display }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <!-- Boutons -->
+        <div class="col-12 text-end">
+          <button type="submit" class="btn btn-primary btn-lg me-2">
+            <i class="bi bi-search me-2"></i>Filtrer
+          </button>
+          <a href="{% url 'club:calendar' %}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-x-circle me-2"></i>Réinitialiser
+          </a>
+        </div>
+        
+      </form>
+    </div>
+  </div>
+  
+  <!-- Liste des matchs -->
+  {% if matchs %}
+  <div class="row g-4">
+    {% for match in matchs %}
+    <div class="col-lg-6">
+      <div class="card h-100 shadow-sm hover-lift {% if match.sets_club == 3 %}border-success{% elif match.sets_club %}border-danger{% else %}border-primary{% endif %} border-3">
+        
+        <!-- Card Header -->
+        <div class="card-header {% if match.sets_club == 3 %}bg-success{% elif match.sets_club %}bg-danger{% else %}bg-primary{% endif %} text-white">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-bold">
+              <i class="bi bi-calendar-event me-2"></i>
+              {{ match.date_rencontre|date:"d/m/Y à H:i" }}
+            </span>
+            <span class="badge bg-light text-dark">{{ match.saison.periode }}</span>
+          </div>
+        </div>
+        
+        <!-- Card Body -->
+        <div class="card-body">
+          <h5 class="card-title mb-3 fw-bold">
+            <i class="bi bi-trophy text-warning me-2"></i>
+            {{ match.championnat.nom }}
+          </h5>
+          
+          <p class="mb-2 small">
+            <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+            <strong>Lieu :</strong> {{ match.lieu_rencontre }}
+          </p>
+          
+          <p class="mb-3 small">
+            <i class="bi bi-people-fill text-info me-2"></i>
+            <strong>Adversaire :</strong>
+            {% for equipe in match.equipes_adverses.all %}
+              {{ equipe.nom }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </p>
+          
+          <!-- Score si match joué -->
+          {% if match.sets_club is not None %}
+          <div class="text-center p-3 bg-light rounded-3 mb-3">
+            <h3 class="mb-1 fw-bold">
+              <span class="{% if match.sets_club == 3 %}text-success{% else %}text-primary{% endif %}">
+                {{ match.sets_club }}
+              </span>
+              <span class="text-muted mx-2">-</span>
+              <span class="text-secondary">{{ match.sets_adverse }}</span>
+            </h3>
+            <small class="text-muted">Sets gagnés</small>
+          </div>
+          
+          <div class="text-center">
+            <span class="badge {% if match.sets_club == 3 %}bg-success{% else %}bg-danger{% endif %} rounded-pill fs-6 px-3 py-2">
+              {{ match.resultat }}
+            </span>
+          </div>
+          {% else %}
+          <div class="text-center">
+            <span class="badge bg-primary rounded-pill fs-6 px-3 py-2">
+              <i class="bi bi-clock me-1"></i>À venir
+            </span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Pagination -->
+  {% if is_paginated %}
+  <nav aria-label="Pagination des matchs" class="mt-5">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1{% if request.GET.saison %}&saison={{ request.GET.saison }}{% endif %}">
+          <i class="bi bi-chevron-double-left"></i>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.saison %}&saison={{ request.GET.saison }}{% endif %}">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+      </li>
+      {% endif %}
+      
+      <li class="page-item active">
+        <span class="page-link">
+          Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
+        </span>
+      </li>
+      
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.saison %}&saison={{ request.GET.saison }}{% endif %}">
+          <i class="bi bi-chevron-right"></i>
+        </a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.saison %}&saison={{ request.GET.saison }}{% endif %}">
+          <i class="bi bi-chevron-double-right"></i>
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+  
+  {% else %}
+  <div class="alert alert-info text-center py-5">
+    <i class="bi bi-info-circle display-1 mb-3 d-block"></i>
+    <h4 class="mb-3">Aucun match trouvé</h4>
+    <p class="lead mb-0">Essayez de modifier vos filtres</p>
+  </div>
+  {% endif %}
+  
+</div>
+
+{% endblock %}

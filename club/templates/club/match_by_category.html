@@ -1,0 +1,172 @@
+{% extends 'club/base.html' %}
+
+{% block title %}Matchs {{ category_genre }} {{ category_age }} - ASI Volley{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold">
+                    <i class="bi {% if category_genre == 'M' %}bi-gender-male text-primary{% else %}bi-gender-female text-danger{% endif %}"></i>
+                    {{ category_genre_display }} - {{ category_age }}
+                </h1>
+                <p class="lead">Tous les matchs de cette catégorie</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'club:categories_choice' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtres par saison -->
+<div class="container my-4">
+    <div class="card">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label for="saison" class="form-label">
+                        <i class="bi bi-calendar-range"></i> Filtrer par saison
+                    </label>
+                    <select name="saison" id="saison" class="form-select">
+                        <option value="">Toutes les saisons</option>
+                        {% for saison in saisons %}
+                        <option value="{{ saison.id }}" {% if request.GET.saison == saison.id|stringformat:"s" %}selected{% endif %}>
+                            {{ saison.periode }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-asi me-2">
+                        <i class="bi bi-funnel"></i> Filtrer
+                    </button>
+                    <a href="{% url 'club:matchs_by_category' category_genre category_age_id %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Réinitialiser
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Liste des matchs -->
+<div class="container mb-5">
+    {% if matchs %}
+    <div class="row g-4">
+        {% for match in matchs %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 {% if match.sets_club == 3 %}victory-card{% elif match.sets_club %}defeat-card{% else %}upcoming-card{% endif %}">
+                <!-- Header -->
+                <div class="card-header {% if match.sets_club == 3 %}bg-success text-white{% elif match.sets_club %}bg-danger text-white{% else %}bg-primary text-white{% endif %}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            <i class="bi bi-calendar-event"></i>
+                            {{ match.date_rencontre|date:"d/m/Y à H:i" }}
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            {{ match.saison.periode }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Championnat -->
+                    <h5 class="card-title">
+                        <i class="bi bi-trophy"></i> {{ match.championnat.nom }}
+                    </h5>
+                    
+                    <!-- Lieu -->
+                    <p class="mb-2">
+                        <strong><i class="bi bi-geo-alt-fill"></i> Lieu :</strong> 
+                        {{ match.lieu_rencontre }}
+                    </p>
+                    
+                    <!-- Adversaire -->
+                    <p class="mb-3">
+                        <strong><i class="bi bi-people-fill"></i> Adversaire :</strong>
+                        {% for equipe in match.equipes_adverses.all %}
+                            {{ equipe.nom }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                    
+                    {% if match.sets_club is not None %}
+                    <!-- Score en SETS -->
+                    <div class="text-center p-3 bg-light rounded mb-3">
+                        <h2 class="mb-0">
+                            <span class="text-primary fw-bold">{{ match.sets_club }}</span>
+                            <span class="text-muted mx-2">-</span>
+                            <span class="text-secondary fw-bold">{{ match.sets_adverse }}</span>
+                        </h2>
+                        <small class="text-muted">Sets gagnés</small>
+                    </div>
+                    
+                    <!-- Score DÉTAILLÉ par set -->
+                    <div class="bg-white border rounded p-2">
+                        <h6 class="text-muted mb-2">Détail des sets :</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if match.set1_club is not None %}
+                            <span class="badge bg-secondary">
+                                Set 1: {{ match.set1_club }}-{{ match.set1_adverse }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if match.set2_club is not None %}
+                            <span class="badge bg-secondary">
+                                Set 2: {{ match.set2_club }}-{{ match.set2_adverse }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if match.set3_club is not None %}
+                            <span class="badge bg-secondary">
+                                Set 3: {{ match.set3_club }}-{{ match.set3_adverse }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if match.set4_club is not None %}
+                            <span class="badge bg-secondary">
+                                Set 4: {{ match.set4_club }}-{{ match.set4_adverse }}
+                            </span>
+                            {% endif %}
+                            
+                            {% if match.set5_club is not None %}
+                            <span class="badge bg-warning text-dark">
+                                Tie-break: {{ match.set5_club }}-{{ match.set5_adverse }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Résultat -->
+                    <div class="text-center mt-3">
+                        <span class="badge {% if match.sets_club == 3 %}bg-success{% else %}bg-danger{% endif %} rounded-pill fs-6">
+                            {{ match.resultat }}
+                        </span>
+                    </div>
+                    {% else %}
+                    <!-- Match à venir -->
+                    <div class="text-center p-3 bg-info bg-opacity-10 rounded">
+                        <h5 class="mb-0 text-info">
+                            <i class="bi bi-clock-history"></i> Match à venir
+                        </h5>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center" role="alert">
+        <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+        <h4>Aucun match trouvé</h4>
+        <p>Aucun match pour cette catégorie</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

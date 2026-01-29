@@ -145,6 +145,8 @@ class Joueur(models.Model):
     nom = models.CharField(max_length=100)
     prenom = models.CharField(max_length=100)
     date_naissance = models.DateField()
+    email = models.EmailField(blank=True, null=True, verbose_name='Email')
+    telephone = models.CharField(max_length=20, blank=True, null=True, verbose_name='Téléphone')
     category = models.ForeignKey(
         CategoryGenre, 
         on_delete=models.PROTECT,  # ✅ Changé
@@ -249,8 +251,7 @@ class MatchDay(models.Model):
                 scores.append(f"{club}-{adverse}")
         return " / ".join(scores) if scores else "Pas de score"
 
-    def __str__(self):
-        return f"Match du {self.date_rencontre.strftime('%d/%m/%Y')} - {self.lieu_rencontre}"
+    
 
     class Meta:
         managed = True  # ✅ Changé

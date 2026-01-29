@@ -1,0 +1,63 @@
+{% extends 'club/base.html' %} {% block title %}Palmarès - ASI Volley{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="container text-center">
+    <h1 class="display-5 fw-bold">🏆 Notre Palmarès</h1>
+    <p class="lead">L'histoire glorieuse de l'ASI Volley</p>
+  </div>
+</div>
+
+<div class="container my-5">
+  {% if palmares %}
+  <div class="row g-4">
+    {% for titre in palmares %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-warning shadow h-100">
+        <!-- Header avec année -->
+        <div class="card-header bg-warning text-dark text-center">
+          <h4 class="mb-0">
+            <i class="bi bi-calendar-star"></i> {{ titre.annee }}
+          </h4>
+        </div>
+
+        <div class="card-body text-center">
+          <!-- Icône trophée -->
+          <i class="bi bi-trophy-fill text-warning" style="font-size: 4rem"></i>
+
+          <!-- Titre -->
+          <h5 class="card-title text-warning mt-3 fw-bold">
+            {{ titre.titre }}
+          </h5>
+
+          <!-- Compétition -->
+          <p class="card-text mb-2">
+            <strong>Compétition :</strong><br />
+            {{ titre.competition }}
+          </p>
+
+          <!-- Catégorie -->
+          <span class="badge bg-secondary fs-6"> {{ titre.category }} </span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center">
+    <div class="alert alert-warning d-inline-block" role="alert">
+      <i class="bi bi-exclamation-triangle fs-1 d-block mb-3"></i>
+      <h4>Aucun titre enregistré</h4>
+      <p>Le palmarès sera bientôt mis à jour !</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Bouton retour -->
+  <div class="text-center mt-5">
+    <a href="{% url 'club:home' %}" class="btn btn-asi btn-lg">
+      <i class="bi bi-arrow-left"></i> Retour à l'accueil
+    </a>
+  </div>
+</div>
+{% endblock %}

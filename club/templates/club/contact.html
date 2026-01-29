@@ -1,0 +1,208 @@
+{% extends 'club/base.html' %}
+{% load static %}
+
+{% block title %}Contact - ASI Volley{% endblock %}
+
+{% block content %}
+
+<!-- En-tête -->
+<div class="hero-section py-5">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold mb-3">
+      <i class="bi bi-envelope"></i> Contactez-nous
+    </h1>
+    <p class="lead">Nous sommes à votre écoute !</p>
+  </div>
+</div>
+
+<!-- Contenu -->
+<div class="container my-5">
+  <div class="row g-4">
+    
+    <!-- Formulaire de contact -->
+    <div class="col-lg-7">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h3 class="mb-4">
+            <i class="bi bi-chat-dots-fill text-primary"></i>
+            Envoyez-nous un message
+          </h3>
+          
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+          {% endfor %}
+          {% endif %}
+          
+          <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Nom -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                <i class="bi bi-person"></i> Nom complet *
+              </label>
+              <input type="text" name="nom" class="form-control form-control-lg" required placeholder="Votre nom et prénom">
+            </div>
+            
+            <!-- Email -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                <i class="bi bi-envelope"></i> Email *
+              </label>
+              <input type="email" name="email" class="form-control form-control-lg" required placeholder="votre.email@exemple.com">
+            </div>
+            
+            <!-- Téléphone -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                <i class="bi bi-telephone"></i> Téléphone
+              </label>
+              <input type="tel" name="telephone" class="form-control form-control-lg" placeholder="+261 XX XX XXX XX">
+            </div>
+            
+            <!-- Sujet -->
+            <div class="mb-3">
+              <label class="form-label fw-bold">
+                <i class="bi bi-tag"></i> Sujet *
+              </label>
+              <select name="sujet" class="form-select form-select-lg" required>
+                <option value="">Choisissez un sujet</option>
+                <option value="inscription">Inscription au club</option>
+                <option value="information">Demande d'information</option>
+                <option value="partenariat">Partenariat</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+            
+            <!-- Message -->
+            <div class="mb-4">
+              <label class="form-label fw-bold">
+                <i class="bi bi-chat-text"></i> Message *
+              </label>
+              <textarea name="message" class="form-control" rows="6" required placeholder="Écrivez votre message ici..."></textarea>
+            </div>
+            
+            <!-- Bouton -->
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+              <i class="bi bi-send-fill"></i> Envoyer le message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Informations de contact -->
+    <div class="col-lg-5">
+      
+      <!-- Coordonnées -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h4 class="mb-4">
+            <i class="bi bi-info-circle-fill text-primary"></i>
+            Nos coordonnées
+          </h4>
+          
+          <!-- Adresse -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-2">
+              <i class="bi bi-geo-alt-fill text-danger"></i> Adresse
+            </h6>
+            <p class="mb-0 text-muted">
+              Akan'ny Sambatra Itaosy<br>
+              Antananarivo, Madagascar
+            </p>
+          </div>
+          
+          <!-- Téléphones -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-2">
+              <i class="bi bi-telephone-fill text-success"></i> Téléphones
+            </h6>
+            <p class="mb-1">
+              <strong>Président :</strong>
+              <a href="tel:+261340000000" class="text-decoration-none">+261 34 00 000 00</a>
+            </p>
+            <p class="mb-0">
+              <strong>Bureau :</strong>
+              <a href="tel:+261320000000" class="text-decoration-none">+261 32 00 000 00</a>
+            </p>
+          </div>
+          
+          <!-- Email -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-2">
+              <i class="bi bi-envelope-fill text-primary"></i> Email
+            </h6>
+            <a href="mailto:contact@asivolley.mg" class="text-decoration-none">
+              contact@asivolley.mg
+            </a>
+          </div>
+          
+          <!-- Réseaux sociaux -->
+          <div>
+            <h6 class="fw-bold mb-3">
+              <i class="bi bi-share-fill text-info"></i> Réseaux sociaux
+            </h6>
+            <div class="d-flex gap-2">
+              <a href="#" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-facebook"></i>
+              </a>
+              <a href="#" class="btn btn-outline-danger btn-lg">
+                <i class="bi bi-instagram"></i>
+              </a>
+              <a href="#" class="btn btn-outline-info btn-lg">
+                <i class="bi bi-twitter"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Horaires -->
+      <div class="card shadow-sm bg-light">
+        <div class="card-body p-4">
+          <h4 class="mb-4">
+            <i class="bi bi-clock-fill text-warning"></i>
+            Horaires du bureau
+          </h4>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">
+              <strong>Lundi - Vendredi :</strong> 9h - 17h
+            </li>
+            <li class="mb-2">
+              <strong>Samedi :</strong> 9h - 12h
+            </li>
+            <li class="mb-0">
+              <strong>Dimanche :</strong> Fermé
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- Carte (optionnel) -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-body p-0">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3774.5!2d47.5!3d-18.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDU0JzAwLjAiUyA0N8KwMzAnMDAuMCJF!5e0!3m2!1sfr!2smg!4v1234567890"
+            width="100%" 
+            height="400" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

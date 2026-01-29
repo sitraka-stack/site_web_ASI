@@ -1,0 +1,320 @@
+{% extends 'club/base.html' %}
+{% load static %}
+
+{% block title %}Accueil - ASI Volley{% endblock %}
+
+{% block content %}
+
+<!-- ========================================
+     MASTHEAD / HERO SECTION
+======================================== -->
+<header class="masthead">
+    <div class="container">
+        <div class="masthead-subheading">Bienvenue à l'ASI Volley !</div>
+        <div class="masthead-heading text-uppercase">Passion • Performance • Esprit d'équipe</div>
+        <p class="lead text-white-75 mb-5">
+            Le club de volley-ball de référence à Antananarivo, Madagascar.<br>
+            Depuis 1995, nous cultivons l'excellence sportive ! 🏐
+        </p>
+        <a class="btn btn-primary btn-xl text-uppercase me-3 mb-3 mb-md-0" href="{% url 'club:categories_choice' %}">
+            <i class="bi bi-people-fill me-2"></i>Nos Équipes
+        </a>
+        <a class="btn btn-light btn-xl text-uppercase" href="{% url 'club:calendar' %}">
+            <i class="bi bi-calendar-check me-2"></i>Calendrier
+        </a>
+    </div>
+</header>
+
+<!-- ========================================
+     DERNIERS RÉSULTATS
+======================================== -->
+<section class="page-section bg-light" id="resultats">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase mb-2">
+                <i class="bi bi-calendar-check text-primary me-2"></i>
+                Derniers Résultats
+            </h2>
+            <h3 class="section-subheading text-muted mb-5">Nos 3 derniers matchs disputés</h3>
+        </div>
+        
+        {% if derniers_matchs %}
+        <div class="row g-4">
+            {% for match in derniers_matchs %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 shadow-sm {% if match.sets_club == 3 %}border-success{% else %}border-danger{% endif %} border-3 hover-lift">
+                    
+                    <!-- Card Header -->
+                    <div class="card-header {% if match.sets_club == 3 %}bg-success{% else %}bg-danger{% endif %} text-white py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">
+                                <i class="bi bi-calendar-event me-2"></i>
+                                {{ match.date_rencontre|date:"d/m/Y" }}
+                            </span>
+                            <span class="badge bg-light text-dark fs-6">
+                                {{ match.saison.periode }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <!-- Championnat -->
+                        <h5 class="card-title mb-3 fw-bold">
+                            <i class="bi bi-trophy text-warning me-2"></i>
+                            {{ match.championnat.nom }}
+                        </h5>
+                        
+                        <!-- Lieu -->
+                        <p class="mb-2 small">
+                            <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                            <strong>Lieu :</strong> {{ match.lieu_rencontre }}
+                        </p>
+                        
+                        <!-- Adversaire -->
+                        <p class="mb-3 small">
+                            <i class="bi bi-people-fill text-info me-2"></i>
+                            <strong>Adversaire :</strong>
+                            {% for equipe in match.equipes_adverses.all %}
+                                {{ equipe.nom }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                        
+                        <!-- Score Principal (Sets) -->
+                        <div class="text-center p-4 bg-gradient rounded-3 mb-3" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+                            <h2 class="mb-1 display-3 fw-bold">
+                                <span class="{% if match.sets_club == 3 %}text-success{% else %}text-primary{% endif %}">
+                                    {{ match.sets_club }}
+                                </span>
+                                <span class="text-muted mx-2">-</span>
+                                <span class="{% if match.sets_adverse == 3 %}text-success{% else %}text-secondary{% endif %}">
+                                    {{ match.sets_adverse }}
+                                </span>
+                            </h2>
+                            <small class="text-muted text-uppercase fw-bold">Sets gagnés</small>
+                        </div>
+                        
+                        <!-- Détail des Sets -->
+                        {% if match.set1_club is not None %}
+                        <div class="bg-white border rounded-3 p-3 mb-3">
+                            <h6 class="text-muted mb-2 small fw-bold text-uppercase">
+                                <i class="bi bi-bar-chart-fill me-2"></i>Détail des sets
+                            </h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% if match.set1_club is not None %}
+                                <span class="badge bg-secondary">Set 1: {{ match.set1_club }}-{{ match.set1_adverse }}</span>
+                                {% endif %}
+                                {% if match.set2_club is not None %}
+                                <span class="badge bg-secondary">Set 2: {{ match.set2_club }}-{{ match.set2_adverse }}</span>
+                                {% endif %}
+                                {% if match.set3_club is not None %}
+                                <span class="badge bg-secondary">Set 3: {{ match.set3_club }}-{{ match.set3_adverse }}</span>
+                                {% endif %}
+                                {% if match.set4_club is not None %}
+                                <span class="badge bg-secondary">Set 4: {{ match.set4_club }}-{{ match.set4_adverse }}</span>
+                                {% endif %}
+                                {% if match.set5_club is not None %}
+                                <span class="badge bg-warning text-dark">
+                                    <i class="bi bi-lightning-fill"></i> TB: {{ match.set5_club }}-{{ match.set5_adverse }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Résultat Final -->
+                        <div class="text-center">
+                            <span class="badge {% if match.sets_club == 3 %}bg-success{% else %}bg-danger{% endif %} rounded-pill fs-5 px-4 py-2">
+                                <i class="bi {% if match.sets_club == 3 %}bi-trophy-fill{% else %}bi-x-circle-fill{% endif %} me-2"></i>
+                                {{ match.resultat }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Bouton Voir Tous -->
+        <div class="text-center mt-5">
+            <a href="{% url 'club:calendar' %}" class="btn btn-primary btn-xl">
+                <i class="bi bi-calendar-check me-2"></i>Voir tous les matchs
+                <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+        
+        {% else %}
+        <!-- Message si aucun match -->
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5" role="alert">
+                    <i class="bi bi-info-circle display-1 mb-3 d-block text-primary"></i>
+                    <h4 class="mb-3 fw-bold">Aucun résultat récent</h4>
+                    <p class="lead mb-0">Les résultats seront bientôt disponibles après nos prochains matchs !</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ========================================
+     PALMARÈS SECTION
+======================================== -->
+{% if derniers_palmares %}
+<section class="page-section" id="palmares">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase mb-2">
+                <i class="bi bi-trophy-fill text-warning me-2"></i>
+                Notre Palmarès
+            </h2>
+            <h3 class="section-subheading text-muted mb-5">Nos plus grands titres et réalisations</h3>
+        </div>
+        
+        <div class="row g-4">
+            {% for titre in derniers_palmares %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 border-warning shadow hover-lift">
+                    <!-- Card Header -->
+                    <div class="card-header bg-warning text-dark text-center py-3">
+                        <h4 class="mb-0 fw-bold">
+                            <i class="bi bi-calendar-star me-2"></i>
+                            {{ titre.annee }}
+                        </h4>
+                    </div>
+                    
+                    <!-- Card Body -->
+                    <div class="card-body text-center py-4">
+                        <!-- Icône Trophée -->
+                        <i class="bi bi-trophy-fill text-warning mb-3" style="font-size: 4rem;"></i>
+                        
+                        <!-- Titre -->
+                        <h5 class="card-title text-warning mt-3 fw-bold mb-3">
+                            {{ titre.titre }}
+                        </h5>
+                        
+                        <!-- Compétition -->
+                        <p class="card-text mb-3">
+                            <strong class="text-dark">{{ titre.competition }}</strong>
+                        </p>
+                        
+                        <!-- Catégorie -->
+                        <span class="badge bg-secondary fs-6 px-3 py-2">
+                            <i class="bi bi-people me-1"></i>
+                            {{ titre.category }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Bouton Voir Tout -->
+        <div class="text-center mt-5">
+            <a href="{% url 'club:historique' %}" class="btn btn-warning btn-xl text-dark">
+                <i class="bi bi-trophy me-2"></i>Voir tout le palmarès
+                <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ========================================
+     STATISTIQUES SECTION
+======================================== -->
+<section class="page-section bg-light" id="stats">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-heading text-uppercase">
+                <i class="bi bi-graph-up-arrow text-primary me-2"></i>
+                ASI Volley en chiffres
+            </h2>
+            <h3 class="section-subheading text-muted">Notre impact depuis 1995</h3>
+        </div>
+        
+        <div class="row text-center g-4">
+            <div class="col-md-3 col-6">
+                <div class="p-4 hover-lift">
+                    <i class="bi bi-trophy-fill text-warning display-4 mb-3"></i>
+                    <h3 class="fw-bold text-primary mb-2">15+</h3>
+                    <p class="text-muted mb-0 fw-bold">Titres remportés</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-6">
+                <div class="p-4 hover-lift">
+                    <i class="bi bi-people-fill text-info display-4 mb-3"></i>
+                    <h3 class="fw-bold text-primary mb-2">200+</h3>
+                    <p class="text-muted mb-0 fw-bold">Joueurs licenciés</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-6">
+                <div class="p-4 hover-lift">
+                    <i class="bi bi-calendar-event text-success display-4 mb-3"></i>
+                    <h3 class="fw-bold text-primary mb-2">50+</h3>
+                    <p class="text-muted mb-0 fw-bold">Matchs par an</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3 col-6">
+                <div class="p-4 hover-lift">
+                    <i class="bi bi-star-fill text-danger display-4 mb-3"></i>
+                    <h3 class="fw-bold text-primary mb-2">30 ans</h3>
+                    <p class="text-muted mb-0 fw-bold">D'expérience</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ========================================
+     CALL TO ACTION
+======================================== -->
+<section class="page-section bg-primary text-white" id="cta">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Rejoindre le Club -->
+            <div class="col-lg-6">
+                <div class="card bg-white text-dark h-100 border-0 shadow-lg hover-lift">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <i class="bi bi-people-fill display-1 text-primary"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Rejoignez-nous !</h3>
+                        <p class="lead mb-4 text-muted">
+                            Envie de faire partie de l'aventure ASI Volley ? 
+                            Inscrivez-vous dès maintenant et intégrez notre communauté sportive.
+                        </p>
+                        <a href="{% url 'club:signup' %}" class="btn btn-primary btn-xl">
+                            <i class="bi bi-person-plus-fill me-2"></i>Inscription Gratuite
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact -->
+            <div class="col-lg-6">
+                <div class="card bg-white text-dark h-100 border-0 shadow-lg hover-lift">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-4">
+                            <i class="bi bi-envelope-fill display-1 text-success"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3">Contactez-nous</h3>
+                        <p class="lead mb-4 text-muted">
+                            Une question ? Besoin d'informations sur nos entraînements ou nos équipes ? 
+                            Notre équipe est là pour vous répondre !
+                        </p>
+                        <a href="{% url 'club:contact' %}" class="btn btn-success btn-xl">
+                            <i class="bi bi-chat-dots-fill me-2"></i>Envoyer un Message
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

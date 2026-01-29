@@ -1,0 +1,109 @@
+{% extends 'club/base.html' %}
+
+{% block title %}
+  Nos Équipes - ASI Volley
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="container text-center">
+    <h1 class="display-5 fw-bold">👥 Choisissez votre catégorie</h1>
+    <p class="lead">Découvrez nos équipes Masculines et Féminines</p>
+  </div>
+</div>
+
+<div class="container my-5">
+
+  <!-- Choix du GENRE -->
+  <div class="row mb-5">
+    <div class="col-12 mb-4">
+      <h3 class="text-center fw-bold">Catégories de Genre</h3>
+    </div>
+
+    {% for genre in genres %}
+      <div class="col-md-6 mb-4">
+        <div class="card {% if genre.genre == 'M' %}bg-primary{% else %}bg-danger{% endif %} text-white h-100 shadow-lg">
+          <div class="card-body text-center p-5">
+            <i class="bi {% if genre.genre == 'M' %}bi-gender-male{% else %}bi-gender-female{% endif %}" style="font-size: 5rem"></i>
+            <h2 class="mt-4 fw-bold">{{ genre.get_genre_display }}</h2>
+            <p class="lead">Toutes les catégories d'âge</p>
+            <a href="#categorie-{{ genre.genre }}" class="btn btn-light btn-lg mt-3">
+              <i class="bi bi-arrow-down-circle"></i> Voir les catégories
+            </a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- MASCULIN - Catégories d'âge -->
+  <div id="categorie-M" class="mb-5">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h3 class="fw-bold text-primary">
+          <i class="bi bi-gender-male"></i> Équipes Masculines
+        </h3>
+      </div>
+
+      {% for cat_age in categories_age %}
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="card shadow h-100 border-primary">
+            <div class="card-body text-center">
+              <i class="bi bi-people-fill text-primary" style="font-size: 3rem"></i>
+              <h5 class="card-title mt-3">{{ cat_age.nom }}</h5>
+
+              {% if cat_age.age_min and cat_age.age_max %}
+                <p class="text-muted">
+                  ({{ cat_age.age_min }}-{{ cat_age.age_max }} ans)
+                </p>
+              {% endif %}
+
+              <a href="{% url 'club:matchs_by_category' 'M' cat_age.id %}" class="btn btn-primary w-100">
+                <i class="bi bi-calendar-event"></i> Voir les matchs
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <hr class="my-5" />
+
+  <!-- FÉMININ - Catégories d'âge -->
+  <div id="categorie-F" class="mb-5">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h3 class="fw-bold text-danger">
+          <i class="bi bi-gender-female"></i> Équipes Féminines
+        </h3>
+      </div>
+
+      {% for cat_age in categories_age %}
+        <div class="col-md-6 col-lg-3 mb-4">
+          <div class="card shadow h-100 border-danger">
+            <div class="card-body text-center">
+              <i class="bi bi-people-fill text-danger" style="font-size: 3rem"></i>
+              <h5 class="card-title mt-3">{{ cat_age.nom }}</h5>
+
+              {% if cat_age.age_min and cat_age.age_max %}
+                <p class="text-muted">
+                  ({{ cat_age.age_min }}-{{ cat_age.age_max }} ans)
+                </p>
+              {% endif %}
+
+              <a href="{% url 'club:matchs_by_category' 'F' cat_age.id %}" class="btn btn-danger w-100">
+                <i class="bi bi-calendar-event"></i> Voir les matchs
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
